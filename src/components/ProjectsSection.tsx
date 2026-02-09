@@ -50,6 +50,10 @@ const projects = [
 export function ProjectsSection() {
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
 
+  // ✅ NEW (only state added)
+  const [activeProject, setActiveProject] =
+    useState<(typeof projects)[0] | null>(null);
+
   return (
     <div className='relative w-full h-full flex items-center justify-center overflow-hidden bg-neutral-900'>
       {/* Background Gradient */}
@@ -82,6 +86,9 @@ export function ProjectsSection() {
               transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
               onHoverStart={() => setHoveredProject(project.id)}
               onHoverEnd={() => setHoveredProject(null)}
+
+              // ✅ NEW (click only, no hover change)
+              onClick={() => setActiveProject(project)}
               className='group relative cursor-pointer'
             >
               {/* Image Container */}
@@ -144,19 +151,6 @@ export function ProjectsSection() {
                 <p className='text-sm text-white/50 tracking-wide'>
                   {project.category}
                 </p>
-                <AnimatePresence>
-                  {hoveredProject === project.id && (
-                    <motion.p
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className='text-sm text-white/70 leading-relaxed'
-                    >
-                      {project.description}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
               </div>
             </motion.div>
           ))}
@@ -179,6 +173,59 @@ export function ProjectsSection() {
           </motion.button>
         </motion.div>
       </div>
+
+      {/* ===================== */}
+      {/* ✅ NEW POPUP LAYER ONLY */}
+      {/* ===================== */}
+      <AnimatePresence>
+        {activeProject && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className='fixed inset-0 z-50 flex items-center justify-center'
+          >
+            {/* Backdrop */}
+            <div
+              className='absolute inset-0 bg-black/60'
+              onMouseEnter={() => setActiveProject(null)}
+            />
+
+            {/* Popup Window */}
+            <motion.div
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 40, opacity: 0 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+              onMouseLeave={() => setActiveProject(null)}
+              className='relative bg-neutral-900 rounded-2xl w-[90%] max-w-5xl max-h-[85vh] overflow-y-auto p-8 border border-white/10'
+            >
+              <h3 className='text-3xl tracking-tight mb-2'>
+                {activeProject.title}
+              </h3>
+              <p className='text-sm text-white/50 mb-6'>
+                {activeProject.category} • {activeProject.year}
+              </p>
+
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+                <ImageWithFallback
+                  src={activeProject.image}
+                  alt={activeProject.title}
+                  className='w-full h-full object-cover rounded-xl'
+                />
+
+                <div className='space-y-4 text-sm text-white/70'>
+                  <p>{activeProject.description}</p>
+                  <p>
+                    This section can explain each part of the design, flow,
+                    structure, and implementation in detail — like a diagram walkthrough.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <style>{`
         .custom-scrollbar::-webkit-scrollbar {

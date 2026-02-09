@@ -13,10 +13,10 @@ import bgMusic from './assets/audio/bg-music.mp3';
 
 const sections = [
   { id: 'hero', component: HeroSection, label: 'Home' },
+  { id: 'projects', component: ProjectsSection, label: 'Projects' },
   { id: 'philosophy', component: PhilosophySection, label: 'Philosophy' },
   { id: 'services', component: ServicesSection, label: 'Services' },
   { id: 'stats', component: StatsSection, label: 'Impact' },
-  { id: 'projects', component: ProjectsSection, label: 'Projects' },
   { id: 'contact', component: ContactSection, label: 'Contact' },
 ];
 
